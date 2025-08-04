@@ -20,6 +20,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Optional but useful for produc
 # === Applications ===
 INSTALLED_APPS = [
     # Django apps
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -92,3 +93,5 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # === Auto Field ===
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+INSTALLED_APPS += ['drf_yasg']
