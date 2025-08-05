@@ -25,7 +25,6 @@ urlpatterns = [
     
     # API routes
     path('api/catalog/', include('catalog.urls')),
-    path('api/orders/', include('orders.urls')),
 
     # Swagger UI and ReDoc
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
