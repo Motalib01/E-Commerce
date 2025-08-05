@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import Category, Product
+from django.contrib.auth.models import Group, User
 
+# Unregister built-in User and Group models
+admin.site.unregister(Group)
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
