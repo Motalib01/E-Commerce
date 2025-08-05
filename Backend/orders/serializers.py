@@ -3,10 +3,12 @@
 from rest_framework import serializers
 from .models import Order, OrderItem
 
+
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
-        fields = ['product', 'quantity']
+        fields = ['id', 'product', 'quantity']
+
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
@@ -14,7 +16,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'client', 'created_at', 'is_sent', 'items']
-        read_only_fields = ['id', 'created_at', 'is_sent', 'client']
+        read_only_fields = ['id', 'created_at', 'client']
 
     def create(self, validated_data):
         items_data = validated_data.pop('items')
@@ -23,3 +25,15 @@ class OrderSerializer(serializers.ModelSerializer):
         for item_data in items_data:
             OrderItem.objects.create(order=order, **item_data)
         return order
+
+    def update(self, instance, validated_data):
+        items_data = validated_data.pop('items', [])
+        instance.is_sent = validated_data.get('is_sent', instance.is_sent)
+        instance.save()
+
+        if items_data:
+            instance.items.all().delete() 
+            for item_data in items_data:
+                OrderItem.objects.create(order=instance, **item_data)
+
+        return instance

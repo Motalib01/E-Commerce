@@ -9,6 +9,16 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
 
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+GOOGLE_SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, config("GOOGLE_SERVICE_ACCOUNT_FILE"))
+
+GOOGLE_CLIENT_SECRET_FILE = os.path.join(BASE_DIR, 'credentials/client_secret_577784229752-l918ioee4s60vhnl55r1ltlar49imufn.apps.googleusercontent.com.json') 
+GOOGLE_REDIRECT_URI = 'http://localhost:8000/oauth2callback/'
+
+
 # === Custom User Model ===
 AUTH_USER_MODEL = "accounts.User"
 REST_FRAMEWORK = {

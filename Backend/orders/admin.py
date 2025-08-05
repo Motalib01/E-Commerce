@@ -1,14 +1,18 @@
 from django.contrib import admin
-from .models import Order, OrderItem
+from django.urls import path, reverse
 from django.utils.html import format_html
-from django.urls import reverse
+from django.shortcuts import redirect
+
+from .models import Order, OrderItem
 
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
-    extra = 0
-    readonly_fields = ['product', 'quantity']
-    show_change_link = True  # Optional: makes product clickable
+    extra = 1  # Allow adding more items
+    autocomplete_fields = ['product']  # Use dropdown with search for Product
+    # Remove readonly_fields to allow editing
+    # readonly_fields = ['product', 'quantity']
+
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -16,6 +20,17 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ['is_sent', 'created_at']
     search_fields = ['client__email', 'client__name']
     inlines = [OrderItemInline]
+    change_list_template = "admin/orders/order_change_list.html"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path("export-to-sheet/", self.admin_site.admin_view(self.redirect_to_oauth), name="export_to_sheet"),
+        ]
+        return custom_urls + urls
+
+    def redirect_to_oauth(self, request):
+        return redirect(reverse('oauth2_init'))
 
     def client_link(self, obj):
         url = reverse("admin:accounts_user_change", args=[obj.client.id])

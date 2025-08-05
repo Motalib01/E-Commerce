@@ -2,6 +2,8 @@
 from django.db import models
 from django.conf import settings
 from catalog.models import Product
+from django import forms
+from accounts.models import User
 
 class Order(models.Model):
     client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -18,3 +20,4 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
+    

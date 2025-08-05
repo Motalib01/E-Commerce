@@ -8,6 +8,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from orders import views as order_views
+
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -31,6 +33,11 @@ urlpatterns = [
     # Authentication
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
+    
+     path('oauth2init/', order_views.oauth2_init, name='oauth2_init'),
+    path('oauth2callback/', order_views.oauth2_callback, name='oauth2_callback'),
+    
+    
     # API routes
     path('api/accounts/', include('accounts.urls')),
     path('api/catalog/', include('catalog.urls')),
