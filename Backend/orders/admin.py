@@ -2,16 +2,15 @@ from django.contrib import admin
 from django.urls import path, reverse
 from django.utils.html import format_html
 from django.shortcuts import redirect
+from django.utils.translation import gettext_lazy as _  # Import translation function
 
 from .models import Order, OrderItem
 
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
-    extra = 1  # Allow adding more items
-    autocomplete_fields = ['product']  # Use dropdown with search for Product
-    # Remove readonly_fields to allow editing
-    # readonly_fields = ['product', 'quantity']
+    extra = 1
+    autocomplete_fields = ['product']
 
 
 @admin.register(Order)
@@ -20,7 +19,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ['is_sent', 'created_at']
     search_fields = ['client__email', 'client__name']
     inlines = [OrderItemInline]
-    change_list_template = "admin/orders/order_change_list.html"
+    change_list_template = "admin/orders/order_change_list.html"  # Custom template for export button
 
     def get_urls(self):
         urls = super().get_urls()
@@ -30,17 +29,18 @@ class OrderAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
     def redirect_to_oauth(self, request):
-        return redirect(reverse('oauth2_init'))
+        return redirect(reverse("oauth2_init"))  # Redirects to your Google OAuth2 flow
 
     def client_link(self, obj):
         url = reverse("admin:accounts_user_change", args=[obj.client.id])
         return format_html('<a href="{}">{}</a>', url, obj.client.email)
-    client_link.short_description = 'Client'
+    client_link.short_description = _('Client')  # Translatable label
     client_link.admin_order_field = 'client__email'
 
     def view_items_link(self, obj):
         return format_html(
-            '<a href="{}">View Items</a>',
-            reverse('admin:orders_order_change', args=[obj.id])
+            '<a href="{}">{}</a>',
+            reverse('admin:orders_order_change', args=[obj.id]),
+            _('View Items')  # Translatable link text
         )
-    view_items_link.short_description = "Items"
+    view_items_link.short_description = _("Items")  # Translatable label
